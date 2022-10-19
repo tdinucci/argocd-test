@@ -25,6 +25,7 @@ serviceAccount:
 
 podAnnotations: 
   abc: one2three
+  def: four5six
 
 podSecurityContext: {}
   # fsGroup: 2000
