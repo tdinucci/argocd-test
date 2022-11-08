@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: service-a
+  template:
+    metadata:
+      labels:
+        deployment: service-a
+    spec:
+      containers:
+      - name: service-a
+        image: nginx:1.22.1-alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config-vol
+          mountPath: /etc/nginx/
+      volumes:
+      - name: config-vol
+        configMap:
+          name: service-a-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf

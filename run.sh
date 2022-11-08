@@ -1,4 +1,4 @@
-#! /bin/bash 
+#!/bin/bash 
 IP=$(ipconfig getifaddr en0)
 
 echo "Local IP: $IP"
@@ -15,7 +15,7 @@ kind create cluster --image kindest/node:v1.23.13 --config manifests/service-clu
 kubectl --context kind-deployments create namespace argocd
 kubectl --context kind-deployments apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-echo -e "\nWaiting for Argo CD components initialise..."
+echo -e "\nWaiting for Argo CD components to initialise..."
 kubectl wait --timeout=120s --context kind-deployments -n argocd --for=condition=ready pod -l app.kubernetes.io/name=argocd-server
 
 ARGO_ADMIN_PASSWORD=$(kubectl --context kind-deployments -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
@@ -24,7 +24,9 @@ argocd login localhost --kube-context kind-deployments --username admin --passwo
 argocd cluster add kind-services --kube-context kind-deployments --name services-cluster --port-forward --port-forward-namespace argocd --yes
 
 kubectl --context kind-services create namespace io-gmon
+helm template chart -s templates/github-repo.yaml | kubectl apply --context kind-deployments -f -
 helm template chart -s templates/guestbook-application.yaml | kubectl apply --context kind-deployments -f -
+helm template chart -s templates/services-applicationset.yaml | kubectl apply --context kind-deployments -f -
 
 rm -rf manifests
 

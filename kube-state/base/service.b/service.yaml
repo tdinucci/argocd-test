@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-b
+spec:
+  selector:
+    deployment: service-b
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

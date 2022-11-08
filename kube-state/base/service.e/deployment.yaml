@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-e
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: service-e
+  template:
+    metadata:
+      labels:
+        deployment: service-e
+    spec:
+      containers:
+      - name: service-e
+        image: nginx:1.22.1-alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config-vol
+          mountPath: /etc/nginx/
+      volumes:
+      - name: config-vol
+        configMap:
+          name: service-e-config
+          items:
+          - key: nginx.conf
+            path: nginx.conf

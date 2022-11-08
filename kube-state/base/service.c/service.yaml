@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-c
+spec:
+  selector:
+    deployment: service-c
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

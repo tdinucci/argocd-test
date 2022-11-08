@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: services
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/tdinucci/argocd-test.git
+      revision: HEAD
+      directories:
+      - path: kube-state/prod/*
+  template:
+    metadata:
+      name: '{{ printf "{{path.basename}}" }}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/tdinucci/argocd-test.git
+        targetRevision: HEAD
+        path: '{{ printf "{{path}}" }}'
+      destination:
+        server: https://{{ .Values.service_cluster_ip }}:8443
+        namespace: io-gmon
